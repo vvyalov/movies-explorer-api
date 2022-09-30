@@ -1,7 +1,8 @@
-const Movie = require('../models/movie')
+const Movie = require('../models/movie');
 const RequestError = require('../errors/request-error');
 const NotFoundError = require('../errors/not-found-error');
 const AccessError = require('../errors/access-error');
+const EmailError = require('../errors/email-error');
 
 const newMovie = (req, res, next) => {
   Movie.create({ owner: req.user._id, ...req.body })
@@ -11,8 +12,13 @@ const newMovie = (req, res, next) => {
         next(new RequestError('Переданы некорректные данные'));
         return;
       }
+      if (err.code === 11000) {
+        next(new EmailError('Пользователь с таким email уже существует'));
+        return;
+      }
       next(err);
-    });
+    })
+    .catch(next);
 };
 
 function deleteMovie(req, res, next) {
@@ -56,5 +62,5 @@ const getMovie = (req, res, next) => {
 module.exports = {
   newMovie,
   deleteMovie,
-  getMovie
+  getMovie,
 };

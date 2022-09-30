@@ -3,17 +3,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 require('dotenv').config();
-const cors = require('cors')
+const cors = require('cors');
 const UserRouter = require('./routes/users');
 const MovieRouter = require('./routes/movies');
-const LoginRouter = require('./routes/login')
+const LoginRouter = require('./routes/login');
 const rateLimit = require('./middlewares/rateLimit');
-const { requestLogger, errorLogger } = require('./middlewares/logger')
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-error');
-const allowedCors = require('./middlewares/allowedCors')
+const allowedCors = require('./middlewares/allowedCors');
 
-const { PORT = 3000, MONGO_DB = 'mongodb://localhost:27017/moviedb' } = process.env;
+const { PORT = 3000, MONGO_DB = 'mongodb://localhost:27017/moviesdb' } = process.env;
 const app = express();
 
 mongoose.connect(MONGO_DB, {
@@ -21,26 +21,26 @@ mongoose.connect(MONGO_DB, {
   useUnifiedTopology: true,
 });
 
-app.use(cors(allowedCors))
+app.use(cors(allowedCors));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(requestLogger);
 app.use(rateLimit);
 
-app.use('/', LoginRouter)
+app.use('/', LoginRouter);
 
+app.use(requestLogger);
 app.use(auth);
 app.use('/', UserRouter);
 app.use('/', MovieRouter);
 
-app.use(errorLogger)
-
-app.use(errors());
+app.use(errorLogger);
 
 app.use((req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
+
+app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });

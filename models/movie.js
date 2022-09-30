@@ -26,22 +26,22 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (link) => isURL(link)
-    }
+      validator: (link) => isURL(link),
+    },
   },
   trailerLink: {
     type: String,
     required: true,
     validate: {
-      validator: (link) => isURL(link)
-    }
+      validator: (link) => isURL(link),
+    },
   },
   thumbnail: {
     type: String,
     required: true,
     validate: {
-      validator: (link) => isURL(link)
-    }
+      validator: (link) => isURL(link),
+    },
   },
   owner: {
     type: String,
@@ -61,6 +61,5 @@ const movieSchema = new mongoose.Schema({
   },
 
 });
-
 
 module.exports = mongoose.model('movie', movieSchema);

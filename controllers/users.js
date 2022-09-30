@@ -5,24 +5,18 @@ const EmailError = require('../errors/email-error');
 const NotFoundError = require('../errors/not-found-error');
 const User = require('../models/user');
 
-const { NODE_ENV, JWT_SECRET } = process.env
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const newUser = (req, res, next) => {
   const { name, email } = req.body;
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        return next(new EmailError('Пользователь с таким email уже существует'));
-      }
-      return bcrypt.hash(req.body.password, 10);
-    })
+  bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
-      email, password: hash, name
+      email, password: hash, name,
     }))
     .then((user) => {
       res.status(201).send({
         name: user.name,
-        about: user.about,
+        email: user.email,
         _id: user._id,
       });
     })
@@ -44,10 +38,7 @@ const updateUser = (req, res, next) => {
   const { name, email } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Указанный _id не найден');
-      }
-      res.send(user);
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -67,7 +58,7 @@ const login = (req, res, next) => {
   User.findUserByCredentials({ email, password })
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key', { expiresIn: '7d' });
-      res.status(200).send({ token })
+      res.status(200).send({ token });
     })
     .catch(next);
 };
