@@ -41,6 +41,10 @@ const updateUser = (req, res, next) => {
       res.status(200).send(user);
     })
     .catch((err) => {
+      if (err.code === 11000) {
+        next(new EmailError('Пользователь с таким email уже существует'));
+        return;
+      }
       if (err.name === 'ValidationError') {
         next(new RequestError('Переданы некорректные данные'));
         return;

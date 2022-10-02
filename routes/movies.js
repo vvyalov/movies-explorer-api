@@ -1,8 +1,16 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const { isURL } = require('validate');
 const {
   newMovie, deleteMovie, getMovie,
 } = require('../controllers/movies');
+
+const validateUrl = (value) => {
+  if (isURL(value)) {
+    return value;
+  }
+  throw new Error('Некорректная ссылка');
+};
 
 router.get('/', getMovie);
 router.post(
@@ -14,9 +22,9 @@ router.post(
       duration: Joi.number().required(),
       year: Joi.string().required(),
       description: Joi.string().required(),
-      image: Joi.string().required().uri(),
-      trailerLink: Joi.string().required().uri(),
-      thumbnail: Joi.string().required().uri(),
+      image: Joi.string().required().custom(validateUrl),
+      trailerLink: Joi.string().required().custom(validateUrl),
+      thumbnail: Joi.string().required().custom(validateUrl),
       movieId: Joi.number().required(),
       nameRU: Joi.string().required(),
       nameEN: Joi.string().required(),

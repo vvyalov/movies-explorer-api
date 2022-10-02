@@ -31,20 +31,22 @@ function deleteMovie(req, res, next) {
       }
       if (movie.owner.toString() !== owner) {
         throw new AccessError('У пользователя нет прав на удаление');
+      } else {
+        Movie.findByIdAndDelete(movieId)
+          .then((deleteMovies) => {
+            res.status(200).send(deleteMovies);
+          })
+          .catch((err) => {
+            if (err.name === 'CastError') {
+              next(new RequestError('Передан некорректный _id'));
+              return;
+            }
+            next(err);
+          })
+          .catch(next);
       }
-      Movie.findByIdAndRemove(movieId)
-        .then(() => {
-          res.send(movie);
-        })
-        .catch(next);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new RequestError('Передан некорректный _id'));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 }
 
 const getMovie = (req, res, next) => {

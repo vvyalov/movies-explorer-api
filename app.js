@@ -30,15 +30,16 @@ app.use(rateLimit);
 app.use('/', LoginRouter);
 
 app.use(requestLogger);
+
 app.use(auth);
 app.use('/', UserRouter);
 app.use('/', MovieRouter);
 
-app.use(errorLogger);
-
-app.use((req, res, next) => {
+app.all('*', (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 app.use((err, req, res, next) => {
