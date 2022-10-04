@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { isURL } = require('validate');
+const { isURL } = require('validator');
 const {
   newMovie, deleteMovie, getMovie,
 } = require('../controllers/movies');
@@ -12,9 +12,9 @@ const validateUrl = (value) => {
   throw new Error('Некорректная ссылка');
 };
 
-router.get('/', getMovie);
+router.get('/movies', getMovie);
 router.post(
-  '/',
+  '/movies',
   celebrate({
     body: Joi.object().keys({
       country: Joi.string().required(),
@@ -33,7 +33,7 @@ router.post(
   newMovie,
 );
 router.delete(
-  '/:movieId',
+  '/movies/:movieId',
   celebrate({
     params: Joi.object().keys({
       movieId: Joi.string().required().alphanum().length(24)
