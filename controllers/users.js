@@ -69,6 +69,8 @@ const login = (req, res, next) => {
 
 const getCurrentUser = (req, res, next) => {
   const userCurrentId = req.user._id;
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', true);
   User.findById(userCurrentId)
     .then((user) => {
       if (!user) {
