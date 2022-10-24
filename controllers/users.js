@@ -90,6 +90,12 @@ const getCurrentUser = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден');
       }
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true
+      }).json({ email: user.email });
       res.send(user);
     })
     .catch(next);
