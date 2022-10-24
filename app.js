@@ -23,9 +23,9 @@ mongoose.connect(MONGO_DB, {
   useUnifiedTopology: true,
 });
 
-app.use(helmet());
 app.use(cookieParser());
-app.use(cors(allowedCors))
+app.use(cors(allowedCors));
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
