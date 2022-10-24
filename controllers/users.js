@@ -9,8 +9,6 @@ const { NODE_ENV, JWT_SECRET } = process.env
 
 const newUser = (req, res, next) => {
   const { name, email } = req.body;
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Credentials', true);
   User.findOne({ email })
     .then((user) => {
       if (user) {
@@ -66,18 +64,9 @@ const updateUser = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Credentials', true);
-
   User.findUserByCredentials({ email, password })
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-        sameSite: 'None',
-        secure: true,
-      }).json({ email: user.email });
       res.status(200).send({ token })
     })
     .catch(next);
@@ -93,16 +82,6 @@ const getCurrentUser = (req, res, next) => {
       res.send(user);
     })
     .catch(next);
-};
-
-const outLogin = (req, res, next) => {
-  res.clearCookie('jwt', {
-    maxAge: 0,
-    httpOnly: true,
-    sameSite: 'None',
-    secure: true,
-  }).send({ message: 'Выход из профиля' });
-  next();
 };
 
 module.exports = {
