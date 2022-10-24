@@ -22,12 +22,22 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
+<<<<<<< HEAD
     "celebrate": "^15.0.1",
+=======
+    "body-parser": "^1.20.0",
+    "celebrate": "^15.0.1",
+    "cookie-parser": "^1.4.6",
+>>>>>>> ac371ec454a4b44be5c5f77ad66174fd6b45bd95
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-rate-limit": "^6.6.0",
     "express-winston": "^4.2.0",
+<<<<<<< HEAD
+=======
+    "helmet": "^6.0.0",
+>>>>>>> ac371ec454a4b44be5c5f77ad66174fd6b45bd95
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.1",
     "nodemon": "^2.0.20",
@@ -38,9 +48,13 @@
   },
   "devDependencies": {
     "eslint": "^8.24.0",
+<<<<<<< HEAD
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-promise": "^6.0.1",
     "typescript": "^4.8.3"
+=======
+    "eslint-config-airbnb-base": "^15.0.0"
+>>>>>>> ac371ec454a4b44be5c5f77ad66174fd6b45bd95
   }
 }

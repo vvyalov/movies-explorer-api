@@ -3,7 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 require('dotenv').config();
-const cors = require('cors')
+const cors = require('cors');
+const cookie = require('cookie-parser');
 const UserRouter = require('./routes/users');
 const MovieRouter = require('./routes/movies');
 const LoginRouter = require('./routes/login')
@@ -21,7 +22,9 @@ mongoose.connect(MONGO_DB, {
   useUnifiedTopology: true,
 });
 
-app.use(cors(allowedCors))
+
+app.use(cookie());
+app.use(cors(allowedCors));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -29,6 +32,7 @@ app.use(requestLogger);
 app.use(rateLimit);
 
 app.use('/', LoginRouter)
+app.use('/', LoginRouter);
 
 app.use(auth);
 app.use('/', UserRouter);
