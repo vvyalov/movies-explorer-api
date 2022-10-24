@@ -51,8 +51,8 @@ app.use(rateLimit);
 app.use('/', LoginRouter)
 
 app.use(auth);
-app.use('/', UserRouter);
-app.use('/', MovieRouter);
+app.use('/users', UserRouter);
+app.use('/movies', MovieRouter);
 
 app.use(errorLogger)
 
