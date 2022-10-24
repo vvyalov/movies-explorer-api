@@ -76,6 +76,11 @@ const getCurrentUser = (req, res, next) => {
   const userCurrentId = req.user._id;
   res.header('Access-Control-Allow-Origin', req.headers.origin);
   res.header('Access-Control-Allow-Credentials', true);
+  res.cookie('jwt', token, {
+    maxAge: 3600000 * 24 * 7,
+    httpOnly: true,
+    sameSite: true,
+  });
 
   User.findById(userCurrentId)
     .then((user) => {
