@@ -1,0 +1,36 @@
+const router = require('express').Router();
+const { isObjectIdOrHexString } = require('mongoose');
+const { celebrate, Joi } = require('celebrate');
+const {
+  newMovie, deleteMovie, getMovie
+} = require('../controllers/movies');
+
+const validate = (value) => {
+  if (isObjectIdOrHexString(value)) {
+    return value;
+  }
+  throw new Error('Некорректный _id карточки');
+};
+
+router.get('/', getMovie);
+router.post('/',
+  celebrate({
+    body: Joi.object().keys({
+      country: Joi.string().required,
+      director: Joi.string().required,
+      duration: Joi.number().required,
+      year: Joi.string().required,
+      description: Joi.string().required,
+      image: Joi.string().required,
+      trailerLink: Joi.string().required,
+      thumbnail: Joi.string().required,
+      movieId: Joi.number().required,
+      nameRU: Joi.string().required,
+      nameEN: Joi.string().required,
+    })
+  }),
+  newMovie);
+router.delete('/_id', deleteMovie);
+
+
+module.exports = router;
