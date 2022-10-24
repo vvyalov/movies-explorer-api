@@ -8,34 +8,16 @@ const User = require('../models/user');
 const { NODE_ENV, JWT_SECRET } = process.env
 
 const newUser = (req, res, next) => {
-  const { name, email } = req.body;
-  User.findOne({ email })
+  const userCurrentId = req.user._id;
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', true);
+
+  User.findById(userCurrentId)
     .then((user) => {
-      if (user) {
-        return next(new EmailError('Пользователь с таким email уже существует'));
+      if (!user) {
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
-      return bcrypt.hash(req.body.password, 10);
-    })
-    .then((hash) => User.create({
-      email, password: hash, name
-    }))
-    .then((user) => {
-      res.status(201).send({
-        name: user.name,
-        about: user.about,
-        _id: user._id,
-      });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new RequestError('Данные заполнены с ошибкой'));
-        return;
-      }
-      if (err.code === 11000) {
-        next(new EmailError('Пользователь с таким email уже существует'));
-        return;
-      }
-      next(err);
+      res.send(user);
     })
     .catch(next);
 };
