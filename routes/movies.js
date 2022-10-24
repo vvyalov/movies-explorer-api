@@ -1,20 +1,29 @@
-const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
+const movieRouter = require('express').Router();
+const { isObjectIdOrHexString } = require('mongoose');
 const { isURL } = require('validator');
-const {
-  newMovie, deleteMovie, getMovie,
-} = require('../controllers/movies');
+const { celebrate, Joi } = require('celebrate');
+const { getMovies, createMovie, deleteMovie } = require('../controllers/movies');
 
-const validateUrl = (value) => {
+const validationId = (value) => {
+  if (isObjectIdOrHexString(value)) {
+    return value;
+  }
+  throw new Error('Передан некорректный id фильма');
+};
+
+const validationUrl = (value) => {
   if (isURL(value)) {
     return value;
   }
-  throw new Error('Некорректная ссылка');
+  throw new Error('Передана некорректная ссылка');
 };
 
-router.get('/movies', getMovie);
-router.post(
-  '/movies',
+// возвращает все сохранённые текущим пользователем фильмы
+movieRouter.get('/', getMovies);
+
+// создаёт фильм
+movieRouter.post(
+  '/',
   celebrate({
     body: Joi.object().keys({
       country: Joi.string().required(),
@@ -22,25 +31,26 @@ router.post(
       duration: Joi.number().required(),
       year: Joi.string().required(),
       description: Joi.string().required(),
-      image: Joi.string().required().custom(validateUrl),
-      trailerLink: Joi.string().required().custom(validateUrl),
-      thumbnail: Joi.string().required().custom(validateUrl),
-      movieId: Joi.number().required(),
+      image: Joi.string().required().custom(validationUrl),
+      trailerLink: Joi.string().required().custom(validationUrl),
       nameRU: Joi.string().required(),
       nameEN: Joi.string().required(),
+      thumbnail: Joi.string().required().custom(validationUrl),
+      movieId: Joi.number().required(), // id из ответа стороннего api
     }),
   }),
-  newMovie,
+  createMovie,
 );
-router.delete(
-  '/movies/:movieId',
+
+// удаляет сохранённый фильм по id
+movieRouter.delete(
+  '/:movieDeleteId',
   celebrate({
     params: Joi.object().keys({
-      movieId: Joi.string().required().alphanum().length(24)
-        .hex(),
+      movieDeleteId: Joi.string().required().custom(validationId),
     }),
   }),
   deleteMovie,
 );
 
-module.exports = router;
+module.exports = movieRouter;
