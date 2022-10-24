@@ -5,6 +5,7 @@ const { errors } = require('celebrate');
 require('dotenv').config();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const UserRouter = require('./routes/users');
 const MovieRouter = require('./routes/movies');
 const LoginRouter = require('./routes/login')
@@ -22,6 +23,7 @@ mongoose.connect(MONGO_DB, {
   useUnifiedTopology: true,
 });
 
+app.use(helmet());
 app.use(cookieParser());
 app.use(cors(allowedCors))
 app.use(bodyParser.json());
