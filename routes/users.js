@@ -5,7 +5,7 @@ const {
   updateUser,
 } = require('../controllers/users');
 
-userRouter.get('/me', getUser); // возвращает данные пользователя
+userRouter.get('/me', getUser);
 userRouter.patch(
   '/me',
   celebrate({
@@ -15,6 +15,6 @@ userRouter.patch(
     }),
   }),
   updateUser,
-); // обновляет данные пользователя
+);
 
 module.exports = userRouter;

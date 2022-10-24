@@ -34,7 +34,6 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials({ emai
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            // хеши не совпали
             throw new UnauthorizedError('Неправильные почта или пароль');
           }
           return user;

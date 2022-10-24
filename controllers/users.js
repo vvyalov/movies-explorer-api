@@ -51,7 +51,7 @@ const updateUser = (req, res, next) => {
     });
 };
 
-// аутентификация
+
 const createUser = (req, res, next) => {
   const {
     name,
@@ -86,7 +86,7 @@ const createUser = (req, res, next) => {
     .catch(next);
 };
 
-// авторизация
+
 const login = (req, res, next) => {
   const { email, password } = req.body;
   res.header('Access-Control-Allow-Origin', req.headers.origin);
@@ -99,7 +99,6 @@ const login = (req, res, next) => {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
         sameSite: 'none',
-        // secure: true,
       }).json({ email: user.email });
     })
     .catch(next);

@@ -5,14 +5,14 @@ const NotFoundError = require('../errors/not-found-err');
 
 const CREATED = 201;
 
-// возвращает все сохранённые текущим пользователем фильмы
+
 const getMovies = (req, res, next) => {
   Movie.find({})
     .then((movies) => res.send(movies))
     .catch(next);
 };
 
-// создаёт фильм
+
 const createMovie = (req, res, next) => {
   const {
     country,
@@ -51,7 +51,7 @@ const createMovie = (req, res, next) => {
     });
 };
 
-// удаляет сохранённый фильм по id
+
 const deleteMovie = (req, res, next) => {
   const { movieDeleteId } = req.params;
   Movie.findById(movieDeleteId)
