@@ -5,7 +5,6 @@ const { errors } = require('celebrate');
 require('dotenv').config();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const helmet = require('helmet');
 const UserRouter = require('./routes/users');
 const MovieRouter = require('./routes/movies');
 const LoginRouter = require('./routes/login')
@@ -13,19 +12,11 @@ const rateLimit = require('./middlewares/rateLimit');
 const { requestLogger, errorLogger } = require('./middlewares/logger')
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-error');
-
+const allowedCors = require('./middlewares/allowedCors');
 
 const { PORT = 3000, MONGO_DB = 'mongodb://localhost:27017/moviedb' } = process.env;
 const app = express();
 
-const allowedCors = [
-    'https://vyalov.movie.nomorepartiesxyz.ru',
-    'http://vyalov.movie.nomorepartiesxyz.ru',
-    'http://api.vyalov.nomorepartiesxyz.ru',
-    'https://api.vyalov.nomorepartiesxyz.ru',
-    'http://localhost:3000',
-    'https://localhost:3000',]
-;
 app.use(helmet());
 mongoose.connect(MONGO_DB, {
   useNewUrlParser: true,
@@ -33,6 +24,7 @@ mongoose.connect(MONGO_DB, {
 });
 
 app.use(cookieParser());
+app.use(cors(allowedCors));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
