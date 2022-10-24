@@ -23,7 +23,6 @@ mongoose.connect(MONGO_DB, {
 });
 
 app.use(cookieParser());
-app.use(cors(allowedCors))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
