@@ -5,37 +5,24 @@ const EmailError = require('../errors/email-error');
 const NotFoundError = require('../errors/not-found-error');
 const User = require('../models/user');
 
-const { NODE_ENV, JWT_SECRET } = process.env
+const { NODE_ENV } = process.env
+const { JWT_SECRET = 'dev-secret' } = process.env;
+
+const SALT_ROUNDS = 10;
+const CREATED = 201;
+
 
 const newUser = (req, res, next) => {
-  const { name, email } = req.body;
-  User.findOne({ email })
+  const userCurrentId = req.user._id;
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', true);
+
+  User.findById(userCurrentId)
     .then((user) => {
-      if (user) {
-        return next(new EmailError('Пользователь с таким email уже существует'));
+      if (!user) {
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
-      return bcrypt.hash(req.body.password, 10);
-    })
-    .then((hash) => User.create({
-      email, password: hash, name
-    }))
-    .then((user) => {
-      res.status(201).send({
-        name: user.name,
-        about: user.about,
-        _id: user._id,
-      });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new RequestError('Данные заполнены с ошибкой'));
-        return;
-      }
-      if (err.code === 11000) {
-        next(new EmailError('Пользователь с таким email уже существует'));
-        return;
-      }
-      next(err);
+      res.send(user);
     })
     .catch(next);
 };
@@ -45,17 +32,21 @@ const updateUser = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       res.send(user);
     })
     .catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+        return;
+      }
       if (err.name === 'ValidationError') {
-        next(new RequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
         return;
       }
       if (err.name === 'CastError') {
-        next(new NotFoundError('Указанный _id не найден'));
+        next(new NotFoundError('Пользователь с указанным _id не найден'));
         return;
       }
       next(err);
@@ -69,30 +60,53 @@ const login = (req, res, next) => {
 
   User.findUserByCredentials({ email, password })
     .then((user) => {
-      const token = jwt.sign({ _id: user._id.toHexString }, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id.toHexString() }, JWT_SECRET, { expiresIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
-        sameSite: true,
-      });
-      res.status(200).send({ token })
+        sameSite: 'none',
+      }).json({ email: user.email });
     })
     .catch(next);
 };
 
 const getCurrentUser = (req, res, next) => {
-  const userCurrentId = req.user._id;
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Credentials', true);
-
-  User.findById(userCurrentId)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Указанный _id не найден');
-      }
-      res.send(user);
+  const {
+    name,
+    email,
+    password,
+  } = req.body;
+  bcrypt.hash(password, SALT_ROUNDS)
+    .then((hash) => {
+      User.create({
+        name,
+        email,
+        password: hash,
+      })
+        .then((user) => {
+          res.status(CREATED).send({
+            name: user.name,
+            email: user.email,
+          });
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new BadRequestError('Данные заполнены с ошибкой или не переданы'));
+            return;
+          }
+          if (err.code === 11000) {
+            next(new ConflictError('Пользователь с таким email уже существует'));
+            return;
+          }
+          next(err);
+        });
     })
     .catch(next);
+};
+
+const outLogin = (req, res, next) => {
+  res.clearCookie('jwt').send({ message: 'Выход из профиля' });
+  next();
 };
 
 module.exports = {
@@ -100,4 +114,5 @@ module.exports = {
   updateUser,
   login,
   getCurrentUser,
+  outLogin,
 };
