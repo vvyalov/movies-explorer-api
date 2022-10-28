@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-const helmet = require('helmet');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const NotFoundError = require('./errors/not-found-err');
 const CentralizedError = require('./errors/centralized-error');
@@ -22,7 +21,6 @@ const allowedCors = [
   'http://localhost:3000',
 ];
 
-app.use(helmet());
 
 mongoose.connect(MONGO_DB, {
   useNewUrlParser: true,
