@@ -84,13 +84,12 @@ const login = (req, res, next) => {
 
 const getCurrentUser = (req, res, next) => {
   const userCurrentId = req.user._id;
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', true);
 
   return User.findById(userCurrentId)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден');
-      }
-      res.send(user);
+      res.status(200).send(user)
     })
     .catch(next);
 };
