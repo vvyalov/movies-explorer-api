@@ -6,7 +6,7 @@ const { JWT_SECRET = 'some-secret-key' } = process.env;
 module.exports = (req, res, next) => {
   const auth = req.cookies;
 
-  if (!token) {
+  if (!auth) {
     next(new AuthError('Необходима авторизация'));
     return;
   }
