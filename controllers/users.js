@@ -10,11 +10,12 @@ const { JWT_SECRET = 'some-secret-key' } = process.env;
 
 const newUser = (req, res, next) => {
   const { name, email } = req.body;
-  return bcrypt.hash(req.body.password, 10)
+  User.findOne({ email })
     .then((user) => {
       if (user) {
         return next(new EmailError('Пользователь с таким email уже существует'));
       }
+      return bcrypt.hash(req.body.password, 10);
     })
     .then((hash) => User.create({
       email, password: hash, name
