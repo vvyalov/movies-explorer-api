@@ -87,7 +87,7 @@ const getCurrentUser = (req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin);
   res.header('Access-Control-Allow-Credentials', true);
 
-  User.findById(userCurrentId)
+  return User.findById(userCurrentId)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден');
