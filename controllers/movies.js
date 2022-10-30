@@ -4,33 +4,7 @@ const NotFoundError = require('../errors/not-found-error');
 const AccessError = require('../errors/access-error');
 
 const newMovie = (req, res, next) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-  } = req.body;
-  Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-    owner: req.user._id,
-  })
+  Movie.create({ owner: req.user._id, ...req.body })
     .then((data) => res.status(200).send(data))
     .catch((err) => {
       if (err.name === 'ValidationError') {
