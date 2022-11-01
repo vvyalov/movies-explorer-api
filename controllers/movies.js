@@ -42,16 +42,15 @@ const newMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  const { movieDeleteId } = req.params;
-  Movie.findById(movieDeleteId)
+  Movie.findById(req.params.movieId)
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError('Фильм с указанным id не найден');
       }
-      if (!movie.owner.equals(req.user._id)) {
+      if (movie.owner.toString() !== req.user._id.toString()) {
         throw new ForbiddenError('У текущего пользователя нет прав на удаление данного фильма');
       }
-      Movie.findByIdAndRemove(movie._id)
+      return movie.remove()
         .then(() => {
           res.send(movie);
         })
