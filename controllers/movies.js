@@ -49,10 +49,10 @@ function deleteMovie(req, res, next) {
       if (!movie) {
         throw new NotFoundError('Фильм с указанным id не найден');
       }
-      if (!movie.owner.toString() !== owner) {
+      if (!movie.owner.equals() !== owner) {
         throw new AccessError('У текущего пользователя нет прав на удаление данного фильма');
       }
-      Movie.findByIdAndDelete(movieDeleteId)
+      Movie.findByIdAndDelete(movie._id)
         .then(() => {
           res.send(movie);
         })
