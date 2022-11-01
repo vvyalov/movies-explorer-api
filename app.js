@@ -26,6 +26,7 @@ app.use(cookieParser());
 app.use(cors(allowedCors));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 app.use((req, res, next) => {
   const { method } = req;
@@ -39,10 +40,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(requestLogger);
 app.use(rateLimit);
 
-app.use('/', LoginRouter)
+app.use(LoginRouter)
 
 app.use(auth);
 app.use('/users', UserRouter);
