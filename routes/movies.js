@@ -13,13 +13,6 @@ const validate = (value) => {
   throw new Error('Некорректный _id карточки');
 };
 
-const validationUrl = (value) => {
-  if (isURL(value)) {
-    return value;
-  }
-  throw new Error('Передана некорректная ссылка');
-};
-
 router.get('/', getMovie);
 router.post('/',
   celebrate({
@@ -29,22 +22,16 @@ router.post('/',
       duration: Joi.number().required(),
       year: Joi.string().required(),
       description: Joi.string().required(),
-      image: Joi.string().required().custom(validationUrl),
-      trailerLink: Joi.string().required().custom(validationUrl),
-      thumbnail: Joi.string().required().custom(validationUrl),
+      image: Joi.string().required().custom(validate),
+      trailerLink: Joi.string().required().custom(validate),
+      thumbnail: Joi.string().required().custom(validate),
       movieId: Joi.number().required(),
       nameRU: Joi.string().required(),
       nameEN: Joi.string().required(),
     })
   }),
   newMovie);
-router.delete('/:movieDeleteId',
-celebrate({
-  params: Joi.object().keys({
-    movieDeleteId: Joi.string().required().custom(validate),
-  }),
-}),
-deleteMovie);
+router.delete('/_id', deleteMovie);
 
 
 module.exports = router;
