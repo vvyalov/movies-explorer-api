@@ -23,10 +23,10 @@ router.post('/',
       description: Joi.string().required(),
       image: Joi.string().required().custom(validationUrl),
       trailerLink: Joi.string().required().custom(validationUrl),
-      thumbnail: Joi.string().required().custom(validationUrl),
-      movieId: Joi.number().required(),
       nameRU: Joi.string().required(),
       nameEN: Joi.string().required(),
+      thumbnail: Joi.string().required().custom(validationUrl),
+      movieId: Joi.number().required(),
     })
   }),
   newMovie);
