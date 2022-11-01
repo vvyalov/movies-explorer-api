@@ -52,7 +52,7 @@ function deleteMovie(req, res, next) {
       if (!movie.owner.toString() !== owner) {
         throw new AccessError('У текущего пользователя нет прав на удаление данного фильма');
       }
-      Movie.findByIdAndDelete(movie._id)
+      Movie.findByIdAndDelete(movieDeleteId)
         .then(() => {
           res.send(movie);
         })
