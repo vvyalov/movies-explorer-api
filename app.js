@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 require('dotenv').config();
 const cors = require('cors');
+const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const UserRouter = require('./routes/users');
 const MovieRouter = require('./routes/movies');
@@ -14,7 +15,7 @@ const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-error');
 const allowedCors = require('./middlewares/allowedCors');
 
-
+app.use(helmet());
 const { PORT = 3000, MONGO_DB = 'mongodb://localhost:27017/moviedb' } = process.env;
 const app = express();
 
