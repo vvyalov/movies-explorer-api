@@ -1,17 +1,9 @@
 const router = require('express').Router();
-const { isObjectIdOrHexString } = require('mongoose');
 const { isURL } = require('validator')
 const { celebrate, Joi } = require('celebrate');
 const {
   newMovie, deleteMovie, getMovie
 } = require('../controllers/movies');
-
-const validate = (value) => {
-  if (isObjectIdOrHexString(value)) {
-    return value;
-  }
-  throw new Error('Некорректный _id карточки');
-};
 
 const validationUrl = (value) => {
   if (isURL(value)) {
@@ -41,6 +33,7 @@ router.post('/',
 
   router.delete(
     '/:movieDeleteId',
+    deleteMovie,
   );
 
 
