@@ -9,34 +9,35 @@ const { JWT_SECRET = 'some-secret-key' } = process.env;
 
 
 const newUser = (req, res, next) => {
-  const { name, email } = req.body;
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        return next(new EmailError('Пользователь с таким email уже существует'));
-      }
-      return bcrypt.hash(req.body.password, 10);
-    })
-    .then((hash) => User.create({
-      email, password: hash, name
-    }))
-    .then((user) => {
-      res.status(201).send({
-        name: user.name,
-        about: user.about,
-        _id: user._id,
-      });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new RequestError('Данные заполнены с ошибкой'));
-        return;
-      }
-      if (err.code === 11000) {
-        next(new EmailError('Пользователь с таким email уже существует'));
-        return;
-      }
-      next(err);
+  const {
+    name,
+    email,
+    password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({
+        name,
+        email,
+        password: hash,
+      })
+        .then((user) => {
+          res.status(201).send({
+            name: user.name,
+            email: user.email,
+          });
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new RequestError('Данные заполнены с ошибкой или не переданы'));
+            return;
+          }
+          if (err.code === 11000) {
+            next(new EmailError('Пользователь с таким email уже существует'));
+            return;
+          }
+          next(err);
+        });
     })
     .catch(next);
 };
@@ -91,9 +92,12 @@ const getCurrentUser = (req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.headers.origin);
   res.header('Access-Control-Allow-Credentials', true);
 
-  return User.findById(userCurrentId)
+  User.findById(userCurrentId)
     .then((user) => {
-      res.status(200).send(user)
+      if (!user) {
+        throw new NotFoundError('Пользователь с указанным _id не найден');
+      }
+      res.send(user);
     })
     .catch(next);
 };
