@@ -42,17 +42,16 @@ const newMovie = (req, res, next) => {
 };
 
 function deleteMovie(req, res, next) {
-  const owner = req.user._id;
-  const { movieId } = req.params;
-  Movie.findById(movieId)
+  const { movieDeleteId } = req.params;
+  Movie.findById(movieDeleteId)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Фильм с указанным id не найден');
       }
-      if (movie.owner.toString() !== owner) {
-        throw new AccessError('У пользователя нет прав на удаление');
+      if (!movie.owner.equals(req.user._id)) {
+        throw new AccessError('У текущего пользователя нет прав на удаление данного фильма');
       }
-      Movie.findByIdAndRemove(movieId)
+      Movie.findByIdAndRemove(movie._id)
         .then(() => {
           res.send(movie);
         })
@@ -60,7 +59,7 @@ function deleteMovie(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new RequestError('Передан некорректный _id'));
+        next(new BadRequestError('Передан некорректный id фильма'));
         return;
       }
       next(err);
