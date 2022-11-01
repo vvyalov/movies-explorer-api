@@ -59,7 +59,7 @@ function deleteMovie(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорректный id фильма'));
+        next(new RequestError('Передан некорректный id фильма'));
         return;
       }
       next(err);
