@@ -53,8 +53,8 @@ const deleteMovie = (req, res, next) => {
         throw new AccessError('У текущего пользователя нет прав на удаление данного фильма');
       } else {
         Movie.findByIdAndDelete(movie._Id)
-          .then((deletedMovie) => {
-            res.status(200).send(deletedMovie);
+          .then(() => {
+            res.status(200).send(movie);
           })
           .catch((error) => {
             if (error.name === 'CastError') {
