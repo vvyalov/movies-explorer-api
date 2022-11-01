@@ -23,5 +23,10 @@ router.post('/signup',
   }),
   newUser);
 
+  autorizationRouter.get(
+    '/signout',
+    outLogin,
+  );
+
 
 module.exports = router;

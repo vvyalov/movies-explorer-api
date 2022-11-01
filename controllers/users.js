@@ -98,6 +98,16 @@ const getCurrentUser = (req, res, next) => {
     .catch(next);
 };
 
+const outLogin = (req, res, next) => {
+  res.clearCookie('jwt', {
+    maxAge: 0,
+    httpOnly: true,
+    sameSite: 'None',
+    secure: true,
+  }).send({ message: 'Выход из профиля' });
+  next();
+};
+
 module.exports = {
   newUser,
   updateUser,
