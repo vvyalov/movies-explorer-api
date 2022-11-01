@@ -12,8 +12,8 @@ const validationUrl = (value) => {
   throw new Error('Передана некорректная ссылка');
 };
 
-router.get('/movies', getMovie);
-router.post('/movies',
+router.get('/', getMovie);
+router.post('/',
   celebrate({
     body: Joi.object().keys({
       country: Joi.string().required(),
@@ -32,7 +32,7 @@ router.post('/movies',
   newMovie);
 
   router.delete(
-    '/movies/:movieDeleteId',
+    '/:movieDeleteId',
     deleteMovie,
   );
 
