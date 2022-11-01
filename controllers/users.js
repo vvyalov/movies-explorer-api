@@ -113,4 +113,5 @@ module.exports = {
   updateUser,
   login,
   getCurrentUser,
+  outLogin
 };
