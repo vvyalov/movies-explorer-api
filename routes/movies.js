@@ -32,7 +32,7 @@ router.post('/',
   newMovie);
 
   router.delete(
-    '/:movieDeleteId',
+    '/movieDeleteId',
     deleteMovie,
   );
 
