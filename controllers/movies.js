@@ -31,7 +31,7 @@ const newMovie = (req, res, next) => {
     movieId,
     owner: req.user._id,
   })
-    .then((movie) => res.status(CREATED).send(movie))
+    .then((movie) => res.status(201).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new RequestError('Переданы некорректные данные при создании фильма'));
