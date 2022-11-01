@@ -31,7 +31,7 @@ router.post('/',
     })
   }),
   newMovie);
-router.delete('/:movieDeleteId', deleteMovie);
+router.delete('/_id', deleteMovie);
 
 
 module.exports = router;
