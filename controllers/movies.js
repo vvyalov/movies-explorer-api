@@ -4,15 +4,41 @@ const NotFoundError = require('../errors/not-found-error');
 const AccessError = require('../errors/access-error');
 
 const newMovie = (req, res, next) => {
-  Movie.create({ owner: req.user._id, ...req.body })
-    .then((data) => res.status(200).send(data))
+  const {
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    nameRU,
+    nameEN,
+    thumbnail,
+    movieId,
+  } = req.body;
+  Movie.create({
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    nameRU,
+    nameEN,
+    thumbnail,
+    movieId,
+    owner: req.user._id,
+  })
+    .then((movie) => res.status(CREATED).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new RequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные при создании фильма'));
         return;
       }
       next(err);
-    })
+    });
 };
 
 function deleteMovie(req, res, next) {
