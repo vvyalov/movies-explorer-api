@@ -48,7 +48,7 @@ const deleteMovie = (req, res, next) => {
       if (!movie) {
         throw new NotFoundError('Фильм с указанным id не найден');
       }
-      if (!movie.owner.equals()) {
+      if (!movie.owner.equals(req.user._id)) {
         throw new AccessError('У текущего пользователя нет прав на удаление данного фильма');
       }
       Movie.findByIdAndRemove(movie._id)
