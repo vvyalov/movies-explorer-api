@@ -48,10 +48,9 @@ app.use(auth);
 app.use('/users', UserRouter);
 app.use('/movies', MovieRouter);
 
-
+app.use(errorLogger)
 
 app.use(errors());
-app.use(errorLogger)
 
 app.use((req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
