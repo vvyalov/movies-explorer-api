@@ -23,7 +23,7 @@ router.post('/signup',
   }),
   newUser);
 
-  autorizationRouter.get(
+  router.get(
     '/signout',
     outLogin,
   );
