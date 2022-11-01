@@ -42,28 +42,30 @@ const newMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  const { movieDeleteId } = req.params;
+  const owner = req.user._id;
+  const { movieDeleteId  } = req.params;
   Movie.findById(movieDeleteId)
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError('Фильм с указанным id не найден');
       }
-      if (!movie.owner.equals(req.user._id)) {
+      if (movie.owner.toString() !== owner) {
         throw new AccessError('У текущего пользователя нет прав на удаление данного фильма');
+      } else {
+        Movie.findByIdAndDelete(movie._Id)
+          .then((deletedMovie) => {
+            res.status(200).send(deletedMovie);
+          })
+          .catch((error) => {
+            if (error.name === 'CastError') {
+              throw new NotFoundError('Фильм с указанным id не найден');
+            }
+            next(error);
+          })
+          .catch(next);
       }
-      Movie.findByIdAndRemove(movie._id)
-        .then(() => {
-          res.send(movie);
-        })
-        .catch(next);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new RequestError('Передан некорректный id фильма'));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 }
 
 const getMovie = (req, res, next) => {
