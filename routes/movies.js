@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { isObjectIdOrHexString } = require('mongoose');
-const { isURL } = require(validator)
+const { isURL } = require('validator')
 const { celebrate, Joi } = require('celebrate');
 const {
   newMovie, deleteMovie, getMovie
