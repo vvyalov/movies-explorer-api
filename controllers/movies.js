@@ -41,7 +41,7 @@ const newMovie = (req, res, next) => {
     });
 };
 
-function deleteMovie(req, res, next) {
+const deleteMovie = (req, res, next) => {
   const { movieDeleteId } = req.params;
   Movie.findById(movieDeleteId)
     .then((movie) => {
